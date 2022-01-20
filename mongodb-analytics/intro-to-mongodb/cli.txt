@@ -1,2 +1,1 @@
-mongoimport --uri mongodb+srv://analytics:analytics-password@mflix.zt8qs.mongodb.net/mflix --collection movies_initial --type csv --headerline 
-    --file movies_initial.csv
+mongoimport --uri mongodb+srv://analytics:analytics-password@mflix.zt8qs.mongodb.net/mflix --collection movies --type csv --headerline --file movies_initial.csv
