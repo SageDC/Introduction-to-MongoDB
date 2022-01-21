@@ -7,7 +7,6 @@ import flask_login
 from bson.objectid import ObjectId
 from urllib.parse import urlencode
 from datetime import datetime
-import certifi
 
 app = Flask(__name__) # create the application instance
 app.config.from_object(__name__) # load config from this file, mflix.py

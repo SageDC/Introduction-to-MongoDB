@@ -1,4 +1,3 @@
-from telnetlib import TLS
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from pymongo.errors import DuplicateKeyError
 from bson.objectid import ObjectId
@@ -9,8 +8,7 @@ from os import environ
 import certifi
 
 try: 
-    db = MongoClient("mongodb+srv://analytics:analytics-password@mflix.zt8qs.mongodb.net/mflix?retryWrites=true&w=majority", tlsCAFile=certifi.where())
-    db = db.mflix
+    db = MongoClient("mongodb+srv://analytics:analytics-password@mflix.zt8qs.mongodb.net/mflix?retryWrites=true&w=majority", tlsCAFile=certifi.where())["mflix"]
 except KeyError:
     raise Exception("You haven't configured your MFLIX_DB_URI!")
 
@@ -29,13 +27,17 @@ def get_movies(filters, page, movies_per_page):
     if "$text" in filters:
         score_meta_doc = { "$meta": "textScore" }
         movies = db.movies.find(filters, { "score": score_meta_doc }) \
-                          .sort([("score", score_meta_doc)], allowDiskUse=True)
+                          .sort([("score", score_meta_doc)])
+        total_num_movies = db.movies.count_documents(filters)
     else:
         movies = db.movies.find(filters) \
                           .sort(sort_key, DESCENDING)
+        total_num_movies = db.movies.count_documents(filters)
 
     # count number of total movie documents
-    total_num_movies = len(list(movies.clone()))
+    # total_num_movies = db.movies.count_documents()
+    # 46014
+    # movies.count()
 
     # limit records based on page number
     movies = movies.skip(movies_per_page * page) \
@@ -60,7 +62,7 @@ def get_all_genres():
         {"$unwind": "$genres"},
         {"$project": {"_id": 0, "genres": 1}},
         {"$group": {"_id": None, "genres": {"$addToSet": "$genres"}}}
-    ], allowDiskUse=True))[0]["genres"]
+    ]))[0]["genres"]
 
 '''
 Returns a MongoDB user given an email.

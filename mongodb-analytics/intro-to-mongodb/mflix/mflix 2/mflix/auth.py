@@ -4,7 +4,6 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
 from mflix.db import get_user, add_user
 import flask_login
 from flask_bcrypt import Bcrypt
-import certifi
 
 bcrypt = Bcrypt(app)
 
